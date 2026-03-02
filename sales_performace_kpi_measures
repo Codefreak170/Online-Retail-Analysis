@@ -1,0 +1,114 @@
+/* =====================================================
+   SALES METRICS
+   ===================================================== */
+
+Total Revenue :=
+SUM ( sales_summary[total_revenue] )
+
+Total Units Sold :=
+SUM ( sales_summary[total_quantity] )
+
+Invoice Count :=
+DISTINCTCOUNT ( sales_summary[invoice] )
+
+
+/* =====================================================
+   CUSTOMER METRICS
+   ===================================================== */
+
+Customer Count :=
+DISTINCTCOUNT ( customer_activity[customer_id] )
+
+Revenue per Customer :=
+DIVIDE ( [Total Revenue], [Customer Count] )
+
+
+/* =====================================================
+   ORDER METRICS
+   ===================================================== */
+
+Average Order Value :=
+DIVIDE ( [Total Revenue], [Invoice Count] )
+
+
+/* =====================================================
+   RETURNS METRICS
+   ===================================================== */
+
+Returns Value :=
+SUM ( returns_summary[total_returns_value] )
+
+Returns Quantity :=
+SUM ( returns_summary[total_returns_quantity] )
+
+Return Transaction Count :=
+COUNTROWS ( returns_summary )
+
+Return Rate % :=
+DIVIDE ( [Returns Value], [Total Revenue] )
+
+
+/* =====================================================
+   PRODUCT METRICS
+   ===================================================== */
+
+Distinct Product Count :=
+DISTINCTCOUNT ( products_by_quantity[product_id] )
+
+Revenue per Product :=
+DIVIDE ( [Total Revenue], [Distinct Product Count] )
+
+
+/* =====================================================
+   CUSTOMER SEGMENTATION
+   ===================================================== */
+
+Customer Engagement Tier :=
+SWITCH (
+    TRUE(),
+    MAX ( customer_activity[active_months] ) <= 2, "Low Engagement",
+    MAX ( customer_activity[active_months] ) <= 5, "Moderate Engagement",
+    "High Engagement"
+)
+
+
+/* =====================================================
+   TIME INTELLIGENCE
+   ===================================================== */
+
+Revenue Previous Month :=
+CALCULATE (
+    [Total Revenue],
+    DATEADD ( 'Date'[Date], -1, MONTH )
+)
+
+Month-over-Month Revenue Growth % :=
+DIVIDE (
+    [Total Revenue] - [Revenue Previous Month],
+    [Revenue Previous Month]
+)
+
+
+/* =====================================================
+   RETENTION METRICS
+   ===================================================== */
+
+Returning Customer Count :=
+CALCULATE (
+    DISTINCTCOUNT ( customer_activity[customer_id] ),
+    customer_activity[active_months] > 1
+)
+
+Customer Retention Rate :=
+DIVIDE ( [Returning Customer Count], [Customer Count] )
+
+
+/* =====================================================
+   REVENUE DISTRIBUTION
+   ===================================================== */
+
+Revenue Share % :=
+DIVIDE (
+    [Total Revenue],
+    CALCULATE ( [Total Revenue], ALL ( sales_summary ) )
+)
