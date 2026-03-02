@@ -1,0 +1,65 @@
+Total Revenue :=
+SUM(sales_summary[total_revenue])
+
+Total Quantity Sold :=
+SUM(sales_summary[total_quantity])
+
+Total Invoices :=
+DISTINCTCOUNT(sales_summary[invoice])
+Number of Customers :=
+DISTINCTCOUNT(customer_activity[customer_id])
+
+Revenue per Customer :=
+DIVIDE([Total Revenue], [Number of Customers])
+Average Order Value :=
+DIVIDE([Total Revenue], [Total Invoices])
+Total Returns Value :=
+SUM(returns_summary[total_returns_value])
+
+Total Returns Quantity :=
+SUM(returns_summary[total_returns_quantity])
+
+Total Return Transactions :=
+COUNTROWS(returns_summary)
+
+Returns Percentage :=
+DIVIDE([Total Returns Value], [Total Revenue])
+Product Count :=
+DISTINCTCOUNT(products_by_quantity[product_id])
+
+Revenue per Product :=
+DIVIDE([Total Revenue], [Product Count])
+Customer Type :=
+SWITCH(
+    TRUE(),
+    MAX(customer_activity[active_months]) <= 2, "Low Engagement",
+    MAX(customer_activity[active_months]) <= 5, "Moderate Engagement",
+    "High Engagement"
+)
+Revenue Previous Month :=
+CALCULATE(
+    [Total Revenue],
+    DATEADD('Date'[Date], -1, MONTH)
+)
+
+MoM Revenue Growth % :=
+DIVIDE(
+    [Total Revenue] - [Revenue Previous Month],
+    [Revenue Previous Month]
+)
+Returning Customers :=
+CALCULATE(
+    DISTINCTCOUNT(customer_activity[customer_id]),
+    FILTER(
+        customer_activity,
+        customer_activity[active_months] > 1
+    )
+)
+
+Customer Retention Rate :=
+DIVIDE([Returning Customers], [Number of Customers])
+Revenue Contribution % :=
+DIVIDE(
+    [Total Revenue],
+    CALCULATE([Total Revenue], ALL(sales_summary))
+)
