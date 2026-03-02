@@ -1,0 +1,70 @@
+import pandas as pd
+import sqlite3
+
+
+# =====================================================
+# DATA LOADING
+# =====================================================
+
+FILE_PATH = "online_retail_II.xlsx"
+
+df_2009 = pd.read_excel(FILE_PATH, sheet_name="Year 2009-2010")
+df_2010 = pd.read_excel(FILE_PATH, sheet_name="Year 2010-2011")
+
+# Combine yearly datasets
+df_raw = pd.concat([df_2009, df_2010], ignore_index=True)
+
+
+# =====================================================
+# DATA CLEANING
+# =====================================================
+
+# Remove missing values and duplicates
+df_clean = (
+    df_raw
+    .dropna()
+    .drop_duplicates()
+    .copy()
+)
+
+# Convert date column
+df_clean["InvoiceDate"] = pd.to_datetime(
+    df_clean["InvoiceDate"],
+    errors="coerce"
+)
+
+# Remove rows where date conversion failed
+df_clean = df_clean.dropna(subset=["InvoiceDate"])
+
+# Create time-based features
+df_clean["Year"] = df_clean["InvoiceDate"].dt.year
+df_clean["Month"] = df_clean["InvoiceDate"].dt.month
+df_clean["DayOfWeek"] = df_clean["InvoiceDate"].dt.day_name()
+df_clean["Week"] = df_clean["InvoiceDate"].dt.isocalendar().week
+df_clean["Quarter"] = df_clean["InvoiceDate"].dt.quarter
+
+# Ensure Customer ID is integer
+df_clean["Customer ID"] = df_clean["Customer ID"].astype(int)
+
+# Standardize column names for SQL compatibility
+df_clean.columns = (
+    df_clean.columns
+    .str.strip()
+    .str.lower()
+    .str.replace(" ", "_")
+)
+
+
+# =====================================================
+# EXPORT TO SQLITE
+# =====================================================
+
+DB_NAME = "online_retail_clean.db"
+
+with sqlite3.connect(DB_NAME) as conn:
+    df_clean.to_sql(
+        name="retail_data",
+        con=conn,
+        index=False,
+        if_exists="replace"
+    )
