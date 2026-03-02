@@ -30,7 +30,7 @@ Key columns in the dataset:
 This raw data serves as the foundation for the ETL process, SQL analytics layer, and Power BI dashboard development.
 
 <p align="center">
-  <img src="images/online_retail_dataset.jpeg" width="900"/>
+  <img src="images/online_retail_dataset .jpeg" width="900"/>
 </p>
 
 ---
