@@ -113,7 +113,9 @@ This layer separates raw data from reporting logic and prepares datasets specifi
 - Revenue contribution %
 - Quantity distribution
 
-(Add dashboard screenshots here)
+(Power BI dashboard)
+![Product Analysis](images/online_retail_powerbi.png)
+![Product Analysis](images/online_retail_analyst_powerbi.png)
 
 ---
 
