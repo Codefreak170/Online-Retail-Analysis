@@ -10,6 +10,30 @@ This project analyzes transactional retail data (2009–2011) and builds a compl
 4. Interactive dashboard in Power BI
 
 The objective is to transform raw transactional data into business-ready insights around revenue, customer behavior, product performance, and returns.
+---
+
+# 📂 Raw Dataset Preview
+
+The project is based on transactional retail data containing invoice-level purchase records. The dataset includes product details, quantities, pricing information, customer identifiers, invoice timestamps, and country-level data.
+
+Key columns in the dataset:
+
+- Invoice  
+- StockCode  
+- Description  
+- Quantity  
+- InvoiceDate  
+- Price  
+- Customer ID  
+- Country  
+
+This raw data serves as the foundation for the ETL process, SQL analytics layer, and Power BI dashboard development.
+
+<p align="center">
+  <img src="images/online_retail_dataset.jpeg" width="900"/>
+</p>
+
+---
 
 ---
 
